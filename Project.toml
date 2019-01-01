@@ -20,4 +20,5 @@ FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
 test = ["Test", "Random","FFTW"]
 
 [compat]
-julia = "0.7,^1"
+julia = "0.7, 1.0"
+LinearOperators = "0.6"
