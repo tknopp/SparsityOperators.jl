@@ -1,0 +1,3 @@
+module SparsityOperators
+
+end # module

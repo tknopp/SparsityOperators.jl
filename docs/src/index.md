@@ -1,0 +1,3 @@
+# SparsityOperators
+
+*Documentation goes here.*
