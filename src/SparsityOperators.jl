@@ -4,12 +4,12 @@ import Base: length, iterate, \
 using LinearAlgebra
 import LinearAlgebra.BLAS: gemv, gemv!
 import LinearAlgebra: BlasFloat, normalize!, norm, rmul!, lmul!
-using LinearOperators
 using SparseArrays
 using Random
 
 using Reexport
 @reexport using Reexport
+@reexport using LinearOperators
 @reexport using FFTW
 @reexport using Wavelets
 
