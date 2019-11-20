@@ -8,8 +8,10 @@ using LinearOperators
 using SparseArrays
 using Random
 
-using FFTW
-using Wavelets
+using Reexport
+@reexport using Reexport
+@reexport using FFTW
+@reexport using Wavelets
 
 const Trafo = Union{AbstractMatrix, AbstractLinearOperator, Nothing}
 const FuncOrNothing = Union{Function, Nothing}
