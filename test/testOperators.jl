@@ -4,10 +4,10 @@ function testDCT1d(N=32)
   for i=1:5
     x .+= rand()*cos.(rand(1:N^2)*collect(1:N^2)) .+ 1im*rand()*cos.(rand(1:N^2)*collect(1:N^2))
   end
-  D1 = DCTOp(Float64,(N^2,),2)
+  D1 = DCTOp(ComplexF64,(N^2,),2)
   D2 = sqrt(2/N^2)*[cos(pi/(N^2)*j*(k+0.5)) for j=0:N^2-1,k=0:N^2-1]
   D2[1,:] .*= 1/sqrt(2)
-  D3 = DCTOp(Float64,(N^2,),4)
+  D3 = DCTOp(ComplexF64,(N^2,),4)
   D4 = sqrt(2/N^2)*[cos(pi/(N^2)*(j+0.5)*(k+0.5)) for j=0:N^2-1,k=0:N^2-1]
 
   y1 = D1*x

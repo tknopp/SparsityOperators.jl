@@ -10,11 +10,12 @@ returns a `LinearOperator` which performs a DST on a given input array.
 * `shape::Tuple`  - size of the array to transform
 """
 function DSTOp(T::Type, shape::Tuple)
-
+  plan = FFTW.plan_r2r(zeros(T,shape),FFTW.RODFT10)
+  iplan = FFTW.plan_r2r(zeros(T,shape),FFTW.RODFT01)
   return LinearOperator(prod(shape), prod(shape), true, false
-            , x->vec(FFTW.r2r(reshape(x,shape),FFTW.RODFT10)).*weights(shape)
+            , x->vec((plan*reshape(x,shape)).*weights(shape))
             , nothing
-            , y->vec(FFTW.r2r(reshape(y ./ weights(shape) ,shape),FFTW.RODFT01)) ./ (8*prod(shape))  )
+            , y->vec(iplan*reshape(y ./ weights(shape) ,shape)) ./ (8*prod(shape))  )
 end
 
 function weights(s)

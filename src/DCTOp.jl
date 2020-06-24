@@ -12,15 +12,18 @@ returns a `DCTOp <: AbstractLinearOperator` which performs a DCT on a given inpu
 """
 function DCTOp(T::Type, shape::Tuple, dcttype=2)
   if dcttype == 2
+    plan = plan_dct(zeros(T,shape))
+    iplan = plan_idct(zeros(T,shape))
     return LinearOperator(prod(shape), prod(shape), true, false
-            , x->vec((dct(reshape(x,shape))))
+            , x->vec(plan*reshape(x,shape))
             , nothing
-            , y->vec((idct(reshape(y,shape)))))
+            , y->vec(iplan*reshape(y,shape)))
   elseif dcttype == 4
     factor = sqrt(1.0/(prod(shape)* 2^length(shape)) )
+    plan = FFTW.plan_r2r(zeros(T,shape),FFTW.REDFT11)
     return LinearOperator(prod(shape), prod(shape), true, false
-            , x->vec((FFTW.r2r(reshape(x,shape),FFTW.REDFT11).*factor))
-            , x->vec((FFTW.r2r(reshape(x,shape),FFTW.REDFT11).*factor))
+            , x->vec((plan*reshape(x,shape)).*factor)
+            , x->vec((plan*reshape(x,shape)).*factor)
             , nothing )
   else
     error("DCT type $(dcttype) not supported")
