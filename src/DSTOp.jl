@@ -12,16 +12,16 @@ returns a `LinearOperator` which performs a DST on a given input array.
 function DSTOp(T::Type, shape::Tuple)
   plan = FFTW.plan_r2r(zeros(T,shape),FFTW.RODFT10)
   iplan = FFTW.plan_r2r(zeros(T,shape),FFTW.RODFT01)
-  return LinearOperator(prod(shape), prod(shape), true, false
-            , x->vec((plan*reshape(x,shape)).*weights(shape))
+  return LinearOperator{T}(prod(shape), prod(shape), true, false
+            , x->vec(plan*reshape(x,shape)).*weights(shape, T)
             , nothing
-            , y->vec(iplan*reshape(y ./ weights(shape) ,shape)) ./ (8*prod(shape))  )
+            , y->vec(iplan*reshape(y ./ weights(shape, T) ,shape)) ./ (8*prod(shape))  )
 end
 
-function weights(s)
-  w = ones(s...)./sqrt(8*prod(s))
-  w[s[1],:,:]./=sqrt(2)
-  w[:,s[2],:]./=sqrt(2)
-  w[:,:,s[3]]./=sqrt(2)
+function weights(s, T::Type)
+  w = ones(T,s...)./T(sqrt(8*prod(s)))
+  w[s[1],:,:]./= T(sqrt(2))
+  w[:,s[2],:]./= T(sqrt(2))
+  w[:,:,s[3]]./= T(sqrt(2))
   return reshape(w,prod(s))
 end

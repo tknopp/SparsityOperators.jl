@@ -26,7 +26,7 @@ include("WeightingOp.jl")
 
 export linearOperator, linearOperatorList
 
-linearOperator(op::Nothing,shape) = nothing
+linearOperator(op::Nothing,shape,T::Type=ComplexF32) = nothing
 
 """
   returns a list of currently implemented `LinearOperator`s
@@ -47,18 +47,18 @@ returns the `LinearOperator` with name `op`.
 * `"DST"`
 * `"Wavelet"`
 """
-function linearOperator(op::AbstractString, shape)
+function linearOperator(op::AbstractString, shape, T::Type=ComplexF32)
   shape_ = tuple(shape...)
   if op == "FFT"
-    trafo = FFTOp(ComplexF32, shape_, false) #FFTOperator(shape)
+    trafo = FFTOp(T, shape_, false) #FFTOperator(shape)
   elseif op == "DCT-II"
     shape_ = tuple(shape[shape .!= 1]...)
-    trafo = DCTOp(ComplexF32, shape_, 2)
+    trafo = DCTOp(T, shape_, 2)
   elseif op == "DCT-IV"
     shape_ = tuple(shape[shape .!= 1]...)
-    trafo = DCTOp(ComplexF32, shape_, 4)
+    trafo = DCTOp(T, shape_, 4)
   elseif op == "DST"
-    trafo = DSTOp(ComplexF32, shape_)
+    trafo = DSTOp(T, shape_)
   elseif op == "Wavelet"
     trafo = WaveletOp(shape_)
   else
