@@ -5,6 +5,10 @@ struct NormalOp{S,D}
   weights::D
 end
 
+function Base.copy(S::NormalOp)
+  return NormalOp(S.parent, S.weights)
+end
+
 function normalOperator(S, W=I)
   return NormalOp(S,W)
 end
