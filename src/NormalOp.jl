@@ -6,7 +6,7 @@ struct NormalOp{S,D}
 end
 
 function Base.copy(S::NormalOp)
-  return NormalOp(S.parent, S.weights)
+  return NormalOp(copy(S.parent), S.weights)
 end
 
 function normalOperator(S, W=I)
@@ -18,8 +18,6 @@ function Base.:*(N::NormalOp, x::AbstractVector)
 
   #@info size(x)  size(N.parent)   size(N.weights)   
 
-  d1 = N.parent*x
-  d2 = N.weights*d1
-  d3 = adjoint(N.parent)*d2
-  return d3
+  d = adjoint(N.parent)*(N.weights*(N.parent*x))
+  return d
 end
