@@ -1,7 +1,7 @@
 name = "SparsityOperators"
 uuid = "a5ff1dd3-4e0a-50db-9022-6d011c1d5846"
 authors = ["Tobias Knopp <tobias@knoppweb.de>"]
-version = "0.1.7"
+version = "0.1.8"
 
 [deps]
 FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
