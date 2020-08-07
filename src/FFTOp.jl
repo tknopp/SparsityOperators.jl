@@ -16,6 +16,7 @@ mutable struct FFTOp <: AbstractLinearOperator{ComplexF64}
   iplan
   shift::Bool
   unitary::Bool
+  T::Type
 end
 
 """
@@ -49,7 +50,8 @@ function FFTOp(T::Type, shape::Tuple, shift=true; unitary=true)
               , plan
               , iplan
               , shift
-              , unitary)
+              , unitary
+              , T)
   else
     return FFTOp(prod(shape), prod(shape), false, false
             , x->vec(plan*(reshape(x,shape)))*facF
@@ -59,10 +61,11 @@ function FFTOp(T::Type, shape::Tuple, shift=true; unitary=true)
             , plan
             , iplan
             , shift
-            , unitary)
+            , unitary
+            , T)
   end
 end
 
-function Base.copy(S::FFTOp) where T
-  return FFTOp(T, size(S.plan), S.shift, unitary=S.unitary)
+function Base.copy(S::FFTOp)
+  return FFTOp(S.T, size(S.plan), S.shift, unitary=S.unitary)
 end
