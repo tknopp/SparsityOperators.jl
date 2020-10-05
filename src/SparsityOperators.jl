@@ -61,7 +61,7 @@ function linearOperator(op::AbstractString, shape, T::Type=ComplexF32)
   elseif op == "DST"
     trafo = DSTOp(T, shape_)
   elseif op == "Wavelet"
-    trafo = WaveletOp(shape_)
+    trafo = WaveletOp(T,shape_)
   else
     error("Unknown transformation")
   end

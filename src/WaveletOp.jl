@@ -11,8 +11,8 @@ a given input array.
 * `shape`                 - size of the Array to transform
 * (`wt=wavelet(WT.db2)`)  - Wavelet to apply
 """
-function WaveletOp(shape, wt=wavelet(WT.db2))
-  return LinearOperator(maximum(shape)^2, prod(shape), false, false
+function WaveletOp(T::Type, shape, wt=wavelet(WT.db2))
+  return LinearOperator{T}(maximum(shape)^2, prod(shape), false, false
             , x->waveletProd(x,shape,wt)
             , nothing
             , y->waveletCTProd(y,shape,wt) )

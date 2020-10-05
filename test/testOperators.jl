@@ -32,7 +32,7 @@ function testFFT1d(N=32,shift=true)
   for i=1:5
     x .+= rand()*cos.(rand(1:N^2)*collect(1:N^2))
   end
-  D1 = FFTOp(Float64,(N^2,),shift)
+  D1 = FFTOp(ComplexF64,(N^2,),shift)
   D2 =  1.0/N*[exp(-2*pi*im*j*k/N^2) for j=0:N^2-1,k=0:N^2-1]
 
   y1 = D1*x
@@ -58,7 +58,7 @@ function testFFT2d(N=32,shift=true)
   for i=1:5
     x .+= rand()*cos.(rand(1:N^2)*collect(1:N^2))
   end
-  D1 = FFTOp(Float64,(N,N),shift)
+  D1 = FFTOp(ComplexF64,(N,N),shift)
 
   idx = CartesianIndices((N,N))[collect(1:N^2)]
   D2 =  1.0/N*[ exp(-2*pi*im*((idx[j][1]-1)*(idx[k][1]-1)+(idx[j][2]-1)*(idx[k][2]-1))/N) for j=1:N^2, k=1:N^2 ]
