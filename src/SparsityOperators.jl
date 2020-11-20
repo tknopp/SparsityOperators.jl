@@ -21,6 +21,7 @@ include("FFTOp.jl")
 include("DCTOp.jl")
 include("DSTOp.jl")
 include("WaveletOp.jl")
+include("GradientOp.jl")
 include("SamplingOp.jl")
 include("WeightingOp.jl")
 include("NormalOp.jl")
@@ -33,7 +34,7 @@ linearOperator(op::Nothing,shape,T::Type=ComplexF32) = nothing
   returns a list of currently implemented `LinearOperator`s
 """
 function linearOperatorList()
-  return ["DCT-II", "DCT-IV", "FFT", "DST", "Wavelet"]
+  return ["DCT-II", "DCT-IV", "FFT", "DST", "Wavelet", "Gradient"]
 end
 
 """
@@ -47,6 +48,7 @@ returns the `LinearOperator` with name `op`.
 * `"DCT-IV"`
 * `"DST"`
 * `"Wavelet"`
+* `"Gradient"`
 """
 function linearOperator(op::AbstractString, shape, T::Type=ComplexF32)
   shape_ = tuple(shape...)
@@ -62,6 +64,8 @@ function linearOperator(op::AbstractString, shape, T::Type=ComplexF32)
     trafo = DSTOp(T, shape_)
   elseif op == "Wavelet"
     trafo = WaveletOp(T,shape_)
+  elseif op=="Gradient"
+    trafo = GradientOp(T,shape_)
   else
     error("Unknown transformation")
   end

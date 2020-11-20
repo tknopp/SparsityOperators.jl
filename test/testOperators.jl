@@ -100,6 +100,39 @@ function testWeighting(N=512)
   @test norm(y2 - y) / norm(y) ≈ 0 atol=0.01
 end
 
+function testGradOp1d(N=512)
+  x = rand(N)
+  G = GradientOp(eltype(x),size(x))
+  G0 = Bidiagonal(ones(N),-ones(N-1), :U)[1:N-1,:]
+
+  y = G*x
+  y0 = G0*x
+  @test norm(y - y0) / norm(y0) ≈ 0 atol=0.001
+
+  xr = transpose(G)*y
+  xr0 = transpose(G0)*y0
+
+  @test norm(y - y0) / norm(y0) ≈ 0 atol=0.001
+end
+
+function testGradOp2d(N=64)
+  x = rand(N,N)
+  G = GradientOp(eltype(x),size(x))
+  G_1d = Bidiagonal(ones(N),-ones(N-1), :U)[1:N-1,:]
+
+  y = G*vec(x)
+  y0 = vcat( vec(G_1d*x), vec(x*transpose(G_1d)) )
+  @test norm(y - y0) / norm(y0) ≈ 0 atol=0.001
+
+  xr = adjoint(G)*y
+  y0_x = reshape(y0[1:N*(N-1)],N-1,N)
+  y0_y = reshape(y0[N*(N-1)+1:end],N,N-1)
+  xr0 = transpose(G_1d)*y0_x + y0_y*G_1d
+  xr0 = vec(xr0)
+
+  @test norm(xr - xr0) / norm(xr0) ≈ 0 atol=0.001
+end
+
 @testset "Linear Operators" begin
   @info "test DCT-II and DCT-IV"
   for N in [2,8,16,32]
@@ -114,4 +147,7 @@ end
   end
   @info "test Weighting"
   testWeighting(512)
+  @info "test gradientOp"
+  testGradOp1d(512)
+  testGradOp2d(64)
 end
