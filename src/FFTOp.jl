@@ -31,9 +31,7 @@ returns an operator which performs an FFT on Arrays of type T
 """
 function FFTOp(T::Type, shape::Tuple, shift=true; unitary=true, cuda::Bool=false)
   if cuda
-    if !CUDA.functional()==true 
-      error("FFTOp: a functional CUDA setup is required when using the option `cuda=true`")
-    end
+    @assert CUDA.functional()==true "a functional CUDA setup is required when using the option `cuda=true` in FFTOp"
     plan = plan_fft(CuArray{T}(undef,shape))
     iplan = plan_ifft(CuArray{T}(undef,shape))
   else
