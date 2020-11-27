@@ -6,6 +6,7 @@ import LinearAlgebra.BLAS: gemv, gemv!
 import LinearAlgebra: BlasFloat, normalize!, norm, rmul!, lmul!
 using SparseArrays
 using Random
+using CUDA
 
 using Reexport
 @reexport using Reexport

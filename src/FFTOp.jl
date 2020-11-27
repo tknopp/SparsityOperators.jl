@@ -29,9 +29,17 @@ returns an operator which performs an FFT on Arrays of type T
 * (`shift=true`)  - if true, fftshifts are performed
 * (`unitary=true`)  - if true, FFT is normalized such that it is unitary
 """
-function FFTOp(T::Type, shape::Tuple, shift=true; unitary=true)
-  plan = plan_fft(zeros(T, shape);flags=FFTW.MEASURE)
-  iplan = plan_ifft(zeros(T, shape);flags=FFTW.MEASURE)
+function FFTOp(T::Type, shape::Tuple, shift=true; unitary=true, cuda::Bool=false)
+  if cuda
+    if !CUDA.functional()==true 
+      error("FFTOp: a functional CUDA setup is required when using the option `cuda=true`")
+    end
+    plan = plan_fft(CuArray{T}(undef,shape))
+    iplan = plan_ifft(CuArray{T}(undef,shape))
+  else
+    plan = plan_fft(zeros(T, shape);flags=FFTW.MEASURE)
+    iplan = plan_ifft(zeros(T, shape);flags=FFTW.MEASURE)
+  end
   if unitary
     facF = 1.0/sqrt(prod(shape))
     facB = sqrt(prod(shape))

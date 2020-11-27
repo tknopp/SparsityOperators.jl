@@ -133,6 +133,21 @@ function testGradOp2d(N=64)
   @test norm(xr - xr0) / norm(xr0) ≈ 0 atol=0.001
 end
 
+function testSampling(N=64)
+  x = rand(ComplexF64,N,N)
+  idx = shuffle(collect(1:N^2)[1:N*div(N,2)])
+  SOp = SamplingOp(idx,(N,N))
+  y = SOp*vec(x)
+  x2 = adjoint(SOp)*y
+  # references
+  y_ref = vec(x[idx])
+  x2_ref = zeros(ComplexF64,N^2)
+  x2_ref[idx] .= y_ref
+  # perform tests
+  @test norm(y - y_ref) / norm(y_ref) ≈ 0 atol=0.000001
+  @test norm(x2 - x2_ref) / norm(x2_ref) ≈ 0 atol=0.000001
+end
+
 @testset "Linear Operators" begin
   @info "test DCT-II and DCT-IV"
   for N in [2,8,16,32]
@@ -150,4 +165,6 @@ end
   @info "test gradientOp"
   testGradOp1d(512)
   testGradOp2d(64)
+  @info "test sampling"
+  testSampling(64)
 end

@@ -4,7 +4,7 @@ export vectorizePattern, SamplingOp
  idx contains sampling index (for the first dimension) of a multidimensional Array
  of size "shape". Transform this into idx into the corresponding vector index
 """
-function vectorizePattern(idx::Array{Int}, shape::Tuple)
+function vectorizePattern(idx::T, shape::Tuple) where T<:AbstractArray{Int}
   return [ floor(Int,(i-1)/size(idx,1))*shape[1]+idx[i] for i = 1:length(idx) ]
 end
 
@@ -18,20 +18,14 @@ indicated by pattern.
 * `pattern::Array{Int}` - indices to sample
 * `shape::Tuple`        - size of the array to sample
 """
-function SamplingOp(pattern::Array{Int}, shape::Tuple)
+function SamplingOp(pattern::T, shape::Tuple, type::Type=ComplexF64) where T<:AbstractArray{Int}
   ndims(pattern)>1 ?  idx = vectorizePattern(pattern, shape) : idx = pattern
-  return opEye(ComplexF64,length(idx))*opRestriction(idx, prod(shape))
+  return opEye(type,length(idx))*opRestriction(idx, prod(shape))
 end
 
-function SamplingOp(pattern::Array{Bool})
+function SamplingOp(pattern::T) where T<:AbstractArray{Bool}
   return LinearOperator(length(pattern), length(pattern), false, false
                   , x->vec(pattern).*x
                   , nothing
                   , y->vec(pattern).*y )
-end
-
-function zeropad(x::Array{T}, pattern::Matrix{Bool}) where T
-  y = zeros(T,size(pattern))
-  y[pattern] = x[pattern]
-  return y
 end
