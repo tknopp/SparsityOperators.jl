@@ -48,9 +48,9 @@ function FFTOp(T::Type, shape::Tuple, shift=true; unitary=true, cuda::Bool=false
 
   if shift
     return FFTOp{T}(prod(shape), prod(shape), false, false
-              , x->vec(fftshift(plan*fftshift(reshape(x,shape))))*facF
+              , x->vec(fftshift(plan*fftshift(reshape(x,shape))))*T(facF)
               , nothing
-              , y->vec(ifftshift(iplan*ifftshift(reshape(y,shape))))*facB
+              , y->vec(ifftshift(iplan*ifftshift(reshape(y,shape))))*T(facB)
               , 0, 0, 0
               , plan
               , iplan
@@ -58,9 +58,9 @@ function FFTOp(T::Type, shape::Tuple, shift=true; unitary=true, cuda::Bool=false
               , unitary)
   else
     return FFTOp{T}(prod(shape), prod(shape), false, false
-            , x->vec(plan*(reshape(x,shape)))*facF
+            , x->vec(plan*(reshape(x,shape)))*T(facF)
             , nothing
-            , y->vec(iplan*(reshape(y,shape)))*facB 
+            , y->vec(iplan*(reshape(y,shape)))*T(facB) 
             , 0, 0, 0
             , plan
             , iplan
