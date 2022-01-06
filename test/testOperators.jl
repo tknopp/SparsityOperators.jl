@@ -148,6 +148,15 @@ function testSampling(N=64)
   @test norm(x2 - x2_ref) / norm(x2_ref) ≈ 0 atol=0.000001
 end
 
+function testWavelet(M=64,N=60)
+  x = rand(M,N)
+  WOp = WaveletOp(Float64,(M,N))
+  x_wavelet = WOp*vec(x)
+  x_reco = reshape( adjoint(WOp)*x_wavelet, M, N)
+
+  @test norm(x_reco - x) / norm(x) ≈ 0 atol=0.001
+end
+
 @testset "Linear Operators" begin
   @info "test DCT-II and DCT-IV"
   for N in [2,8,16,32]
@@ -167,4 +176,7 @@ end
   testGradOp2d(64)
   @info "test sampling"
   testSampling(64)
+  @info "test WaveletOp"
+  testWavelet(64,64)
+  testWavelet(64,60)
 end
