@@ -130,6 +130,10 @@ function testGradOp2d(N=64)
   xr0 = transpose(G_1d)*y0_x + y0_y*G_1d
   xr0 = vec(xr0)
 
+  @info xr[1:10]
+
+  @info xr0[1:10]
+
   @test norm(xr - xr0) / norm(xr0) ≈ 0 atol=0.001
 end
 
