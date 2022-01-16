@@ -35,8 +35,9 @@ function GradientOp(T::Type, shape::NTuple{N,Int64}, dim::Int64) where N
   nrow = div( (shape[dim]-1)*prod(shape), shape[dim] )
   ncol = prod(shape)
   return LinearOperator{T}(nrow, ncol, false, false,
-                    (res, x, α, β) -> (res .= grad(x,shape,dim); res), # ignore α, β
-                    (res, x, α, β) -> (res .= grad_t(x,shape,dim); res), nothing )
+                          (res, x, α, β) -> (res .= α .* grad(x,shape,dim) ; res), 
+                          (res, x, α, β) -> (res .= α .* grad_t(x,shape,dim) .+ (β .* res); res), 
+                          (res, x, α, β) -> (res .= α .* grad_t(x,shape,dim) .+ (β .* res); res) )
 end
 
 # directional gradients
@@ -92,6 +93,7 @@ function grad_t(g::T, shape::NTuple{2,Int64}, dim::Int64) where T<:AbstractVecto
     img[:,1:ny-1] .= g
     img[:,2:ny] .-= g
   end
+
   return vec(img)
 end
 

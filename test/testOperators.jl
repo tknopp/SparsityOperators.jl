@@ -116,7 +116,7 @@ function testGradOp1d(N=512)
 end
 
 function testGradOp2d(N=64)
-  x = repeat(1:N,1,N) #rand(N,N)
+  x = repeat(1:N,1,N)
   G = GradientOp(eltype(x),size(x))
   G_1d = Bidiagonal(ones(N),-ones(N-1), :U)[1:N-1,:]
 
@@ -129,10 +129,6 @@ function testGradOp2d(N=64)
   y0_y = reshape(y0[N*(N-1)+1:end],N,N-1)
   xr0 = transpose(G_1d)*y0_x + y0_y*G_1d
   xr0 = vec(xr0)
-
-  @info xr
-
-  @info xr0
 
   @test norm(xr - xr0) / norm(xr0) ≈ 0 atol=0.001
 end
@@ -177,7 +173,7 @@ end
   testWeighting(512)
   @info "test gradientOp"
   testGradOp1d(512)
-  testGradOp2d(4) #64
+  testGradOp2d(64) 
   @info "test sampling"
   testSampling(64)
   @info "test WaveletOp"
