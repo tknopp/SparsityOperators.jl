@@ -25,7 +25,7 @@ end
 
 function SamplingOp(pattern::T) where T<:AbstractArray{Bool}
   return LinearOperator(length(pattern), length(pattern), false, false
-                  , x->vec(pattern).*x
+                  , (res, x, α, β) -> (res .= vec(pattern).*x; res ) 
                   , nothing
-                  , y->vec(pattern).*y )
+                  , (res, x, α, β) -> (res .= vec(pattern).*x; res ) )
 end
