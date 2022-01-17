@@ -15,6 +15,10 @@ mutable struct DSTOp{T} <: AbstractLinearOperator{T}
   iplan
 end
 
+LinearOperators.has_args5(op::DSTOp) = true
+LinearOperators.use_prod5!(op::DSTOp) = true
+LinearOperators.isallocated5(op::DSTOp) = true
+
 """
   DSTOp(T::Type, shape::Tuple)
 
@@ -28,9 +32,9 @@ function DSTOp(T::Type, shape::Tuple)
   plan = FFTW.plan_r2r(zeros(T,shape),FFTW.RODFT10)
   iplan = FFTW.plan_r2r(zeros(T,shape),FFTW.RODFT01)
   return DSTOp{T}(prod(shape), prod(shape), true, false
-            , x->T.( vec(plan*reshape(x,shape)) ).*weights(shape, T)
+            , wrapProd(x->T.( vec(plan*reshape(x,shape)) ).*weights(shape, T))
             , nothing
-            , y->T.( vec(iplan*reshape(y ./ weights(shape, T) ,shape)) ./ (8*prod(shape)) )
+            , wrapProd(y->T.( vec(iplan*reshape(y ./ weights(shape, T) ,shape)) ./ (8*prod(shape)) ))
             , 0, 0, 0
             , plan
             , iplan)

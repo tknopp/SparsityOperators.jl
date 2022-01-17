@@ -17,6 +17,17 @@ using Reexport
 const Trafo = Union{AbstractMatrix, AbstractLinearOperator, Nothing}
 const FuncOrNothing = Union{Function, Nothing}
 
+# Helper function to wrap a prod into a 5-args mul
+function wrapProd(prod::Function)
+  λ = (res, x, α, β) -> begin
+    if β == zero(β)
+      res .= prod(x) .* α
+    else
+      res .= prod(x) .* α .+ β .* res
+    end
+  end
+  return λ
+end
 
 include("FFTOp.jl")
 include("DCTOp.jl")
