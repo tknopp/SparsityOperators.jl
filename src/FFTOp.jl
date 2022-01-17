@@ -12,15 +12,14 @@ mutable struct FFTOp{T} <: AbstractLinearOperator{T}
   nprod :: Int
   ntprod :: Int
   nctprod :: Int
+  args5 :: Bool
+  use_prod5! :: Bool
+  allocated5 :: Bool
   plan
   iplan
   shift::Bool
   unitary::Bool
 end
-
-LinearOperators.has_args5(op::FFTOp) = true
-LinearOperators.use_prod5!(op::FFTOp) = true
-LinearOperators.isallocated5(op::FFTOp) = true
 
 """
   FFTOp(T::Type, shape::Tuple, shift=true, unitary=true)
@@ -79,7 +78,7 @@ function FFTOp(T::Type, shape::Tuple, shift=true; unitary=true, cuda::Bool=false
               , (res, x, α, β) -> fft_multiply_shift(res, plan, x, α, β, shape, T, facF) 
               , nothing
               , (res, x, α, β) -> fft_multiply_ishift(res, iplan, x, α, β, shape, T, facB) 
-              , 0, 0, 0
+              , 0, 0, 0, true, true, true
               , plan
               , iplan
               , shift
@@ -89,7 +88,7 @@ function FFTOp(T::Type, shape::Tuple, shift=true; unitary=true, cuda::Bool=false
             , (res, x, α, β) -> fft_multiply(res, plan, x, α, β, shape, T, facF) 
             , nothing
             , (res, x, α, β) -> fft_multiply(res, iplan, x, α, β, shape, T, facB)
-            , 0, 0, 0
+            , 0, 0, 0, true, true, true
             , plan
             , iplan
             , shift

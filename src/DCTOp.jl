@@ -1,5 +1,23 @@
 export DCTOp
 
+mutable struct DCTOp{T} <: AbstractLinearOperator{T}
+  nrow :: Int
+  ncol :: Int
+  symmetric :: Bool
+  hermitian :: Bool
+  prod! :: Function
+  tprod! :: Nothing
+  ctprod! :: Function
+  nprod :: Int
+  ntprod :: Int
+  nctprod :: Int
+  args5 :: Bool
+  use_prod5! :: Bool
+  allocated5 :: Bool
+  plan
+  dcttype::Int
+end
+
 """
   DCTOp(T::Type, shape::Tuple, dcttype=2)
 
@@ -36,6 +54,12 @@ function DCTOp(T::Type, shape::Tuple, dcttype=2)
     error("DCT type $(dcttype) not supported")
   end
 
-  return LinearOperator{T}(prod(shape), prod(shape), false, false,
-                           prod!, nothing, tprod!)
+  return DCTOp{T}(prod(shape), prod(shape), false, false,
+                      prod!, nothing, tprod!,
+                      0, 0, 0, true, true, true,
+                      plan, dcttype)
+end
+
+function Base.copy(S::DCTOp)
+  return DCTOp(eltype(S), size(S.plan), S.dcttype)
 end
