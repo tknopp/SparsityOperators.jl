@@ -5,19 +5,18 @@ mutable struct DSTOp{T} <: AbstractLinearOperator{T}
   ncol :: Int
   symmetric :: Bool
   hermitian :: Bool
-  prod :: Function
-  tprod :: Nothing
-  ctprod :: Function
+  prod! :: Function
+  tprod! :: Nothing
+  ctprod! :: Function
   nprod :: Int
   ntprod :: Int
   nctprod :: Int
+  args5 :: Bool
+  use_prod5! :: Bool
+  allocated5 :: Bool
   plan
   iplan
 end
-
-LinearOperators.has_args5(op::DSTOp) = true
-LinearOperators.use_prod5!(op::DSTOp) = true
-LinearOperators.isallocated5(op::DSTOp) = true
 
 """
   DSTOp(T::Type, shape::Tuple)
@@ -35,7 +34,7 @@ function DSTOp(T::Type, shape::Tuple)
             , wrapProd(x->T.( vec(plan*reshape(x,shape)) ).*weights(shape, T))
             , nothing
             , wrapProd(y->T.( vec(iplan*reshape(y ./ weights(shape, T) ,shape)) ./ (8*prod(shape)) ))
-            , 0, 0, 0
+            , 0, 0, 0, true, true, true
             , plan
             , iplan)
 end
