@@ -5,12 +5,15 @@ mutable struct DSTOp{T} <: AbstractLinearOperator{T}
   ncol :: Int
   symmetric :: Bool
   hermitian :: Bool
-  prod :: Function
-  tprod :: Nothing
-  ctprod :: Function
+  prod! :: Function
+  tprod! :: Nothing
+  ctprod! :: Function
   nprod :: Int
   ntprod :: Int
   nctprod :: Int
+  args5 :: Bool
+  use_prod5! :: Bool
+  allocated5 :: Bool
   plan
   iplan
 end
@@ -28,10 +31,10 @@ function DSTOp(T::Type, shape::Tuple)
   plan = FFTW.plan_r2r(zeros(T,shape),FFTW.RODFT10)
   iplan = FFTW.plan_r2r(zeros(T,shape),FFTW.RODFT01)
   return DSTOp{T}(prod(shape), prod(shape), true, false
-            , x->T.( vec(plan*reshape(x,shape)) ).*weights(shape, T)
+            , wrapProd(x->T.( vec(plan*reshape(x,shape)) ).*weights(shape, T))
             , nothing
-            , y->T.( vec(iplan*reshape(y ./ weights(shape, T) ,shape)) ./ (8*prod(shape)) )
-            , 0, 0, 0
+            , wrapProd(y->T.( vec(iplan*reshape(y ./ weights(shape, T) ,shape)) ./ (8*prod(shape)) ))
+            , 0, 0, 0, true, true, true
             , plan
             , iplan)
 end

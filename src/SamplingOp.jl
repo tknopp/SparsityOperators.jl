@@ -24,8 +24,6 @@ function SamplingOp(pattern::T, shape::Tuple, type::Type=ComplexF64) where T<:Ab
 end
 
 function SamplingOp(pattern::T) where T<:AbstractArray{Bool}
-  return LinearOperator(length(pattern), length(pattern), false, false
-                  , x->vec(pattern).*x
-                  , nothing
-                  , y->vec(pattern).*y )
+  return LinearOperator(length(pattern), length(pattern), true, false
+                  , wrapProd(x -> vec(pattern).*x ) )
 end

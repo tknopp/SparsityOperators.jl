@@ -13,7 +13,7 @@ a given input array.
 """
 function WaveletOp(T::Type, shape, wt=wavelet(WT.db2))
   return LinearOperator{T}(prod(shape), prod(shape), false, false
-            , x->vec( dwt(reshape(x,shape),wt) )
+            , wrapProd( x->vec( dwt(reshape(x,shape),wt) ) )
             , nothing
-            , y->vec( idwt(reshape(y,shape),wt) ) )
+            , wrapProd( y->vec( idwt(reshape(y,shape),wt) ) ) )
 end
