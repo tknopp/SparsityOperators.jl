@@ -9,7 +9,7 @@ function Base.copy(S::NormalOp)
   return NormalOp(copy(S.parent), S.weights)
 end
 
-function normalOperator(S, W=I)
+function normalOperator(S, W=opEye())
   return NormalOp(S,W)
 end
 
