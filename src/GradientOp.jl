@@ -61,7 +61,7 @@ function grad(img::T, shape::NTuple{3,Int64}, dim::Int64) where T<:AbstractVecto
   if dim==1
     return vec(img[1:end-1,:,:].-img[2:end,:,:])
   elseif dim==2
-    return vec(img[:,:,1:end-1].-img[:,:,2:end])
+    return vec(img[:,1:end-1,:].-img[:,2:end,:])
   end
   
   return vec(img[:,:,1:end-1].-img[:,:,2:end])
