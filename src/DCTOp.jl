@@ -14,9 +14,13 @@ mutable struct DCTOp{T} <: AbstractLinearOperator{T}
   args5 :: Bool
   use_prod5! :: Bool
   allocated5 :: Bool
+  Mv5 :: Vector{T}
+  Mtu5 :: Vector{T}
   plan
   dcttype::Int
 end
+
+LinearOperators.storage_type(op::DCTOp) = typeof(op.Mv5)
 
 """
   DCTOp(T::Type, shape::Tuple, dcttype=2)
@@ -56,7 +60,7 @@ function DCTOp(T::Type, shape::Tuple, dcttype=2)
 
   return DCTOp{T}(prod(shape), prod(shape), false, false,
                       prod!, nothing, tprod!,
-                      0, 0, 0, true, true, true,
+                      0, 0, 0, true, true, true, T[], T[],
                       plan, dcttype)
 end
 

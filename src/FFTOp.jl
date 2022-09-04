@@ -15,11 +15,15 @@ mutable struct FFTOp{T} <: AbstractLinearOperator{T}
   args5 :: Bool
   use_prod5! :: Bool
   allocated5 :: Bool
+  Mv5 :: Vector{T}
+  Mtu5 :: Vector{T}
   plan
   iplan
   shift::Bool
   unitary::Bool
 end
+
+LinearOperators.storage_type(op::FFTOp) = typeof(op.Mv5)
 
 """
   FFTOp(T::Type, shape::Tuple, shift=true, unitary=true)
@@ -78,7 +82,7 @@ function FFTOp(T::Type, shape::Tuple, shift=true; unitary=true, cuda::Bool=false
               , (res, x, α, β) -> fft_multiply_shift(res, plan, x, α, β, shape, T, facF) 
               , nothing
               , (res, x, α, β) -> fft_multiply_ishift(res, iplan, x, α, β, shape, T, facB) 
-              , 0, 0, 0, true, true, true
+              , 0, 0, 0, true, true, true, T[], T[]
               , plan
               , iplan
               , shift
@@ -88,7 +92,7 @@ function FFTOp(T::Type, shape::Tuple, shift=true; unitary=true, cuda::Bool=false
             , (res, x, α, β) -> fft_multiply(res, plan, x, α, β, shape, T, facF) 
             , nothing
             , (res, x, α, β) -> fft_multiply(res, iplan, x, α, β, shape, T, facB)
-            , 0, 0, 0, true, true, true
+            , 0, 0, 0, true, true, true, T[], T[]
             , plan
             , iplan
             , shift

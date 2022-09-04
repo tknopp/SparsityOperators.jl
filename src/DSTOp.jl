@@ -14,9 +14,13 @@ mutable struct DSTOp{T} <: AbstractLinearOperator{T}
   args5 :: Bool
   use_prod5! :: Bool
   allocated5 :: Bool
+  Mv5 :: Vector{T}
+  Mtu5 :: Vector{T}
   plan
   iplan
 end
+
+LinearOperators.storage_type(op::DSTOp) = typeof(op.Mv5)
 
 """
   DSTOp(T::Type, shape::Tuple)
@@ -34,7 +38,7 @@ function DSTOp(T::Type, shape::Tuple)
             , wrapProd(x->T.( vec(plan*reshape(x,shape)) ).*weights(shape, T))
             , nothing
             , wrapProd(y->T.( vec(iplan*reshape(y ./ weights(shape, T) ,shape)) ./ (8*prod(shape)) ))
-            , 0, 0, 0, true, true, true
+            , 0, 0, 0, true, true, true, T[], T[]
             , plan
             , iplan)
 end
