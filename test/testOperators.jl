@@ -135,10 +135,15 @@ end
 
 function testSampling(N=64)
   x = rand(ComplexF64,N,N)
+  # index-based sampling
   idx = shuffle(collect(1:N^2)[1:N*div(N,2)])
   SOp = SamplingOp(idx,(N,N))
   y = SOp*vec(x)
   x2 = adjoint(SOp)*y
+  # mask-based sampling
+  msk = zeros(Bool,N*N);msk[idx].=true
+  SOp2 = SamplingOp(msk)
+  y2 = SOp2*vec(x)
   # references
   y_ref = vec(x[idx])
   x2_ref = zeros(ComplexF64,N^2)
@@ -146,6 +151,7 @@ function testSampling(N=64)
   # perform tests
   @test norm(y - y_ref) / norm(y_ref) ≈ 0 atol=0.000001
   @test norm(x2 - x2_ref) / norm(x2_ref) ≈ 0 atol=0.000001
+  @test norm(y2 - x2_ref) / norm(x2_ref) ≈ 0 atol=0.000001
 end
 
 function testWavelet(M=64,N=60)
