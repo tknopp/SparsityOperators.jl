@@ -143,7 +143,7 @@ function testSampling(N=64)
   # mask-based sampling
   msk = zeros(Bool,N*N);msk[idx].=true
   SOp2 = SamplingOp(msk)
-  y2 = SOp2*vec(x)
+  y2 = ComplexF64.(SOp2*vec(x))
   # references
   y_ref = vec(x[idx])
   x2_ref = zeros(ComplexF64,N^2)

@@ -32,13 +32,18 @@ returns a `LinearOperator` which performs a DST on a given input array.
 * `shape::Tuple`  - size of the array to transform
 """
 function DSTOp(T::Type, shape::Tuple)
-  plan = FFTW.plan_r2r(zeros(T,shape),FFTW.RODFT10)
-  iplan = FFTW.plan_r2r(zeros(T,shape),FFTW.RODFT01)
+  tmp=Array{Complex{real(T)}}(undef, shape)
+
+  plan = FFTW.plan_r2r!(tmp,FFTW.RODFT10)
+  iplan = FFTW.plan_r2r!(tmp,FFTW.RODFT01)
+
+  w = weights(shape, T)
+
   return DSTOp{T}(prod(shape), prod(shape), true, false
-            , wrapProd(x->T.( vec(plan*reshape(x,shape)) ).*weights(shape, T))
+            , (res,x) -> dst_multiply!(res,plan,x,tmp,w)
             , nothing
-            , wrapProd(y->T.( vec(iplan*reshape(y ./ weights(shape, T) ,shape)) ./ (8*prod(shape)) ))
-            , 0, 0, 0, true, true, true, T[], T[]
+            , (res,x) -> dst_bmultiply!(res,iplan,x,tmp,w)
+            , 0, 0, 0, true, false, true, T[], T[]
             , plan
             , iplan)
 end
@@ -55,6 +60,17 @@ function weights(s, T::Type)
   return reshape(w,prod(s))
 end
 
+function dst_multiply!(res::Vector{T}, plan::P, x::Vector{T}, tmp::Array{T,D}, weights::Vector{T}) where {T,P,D}
+  tmp[:] .= x
+  plan * tmp
+  res .= vec(tmp).*weights
+end
+
+function dst_bmultiply!(res::Vector{T}, plan::P, x::Vector{T}, tmp::Array{T,D}, weights::Vector{T}) where {T,P,D}
+  tmp[:] .= x./weights
+  plan * tmp
+  res[:] .= vec(tmp)./(8*length(tmp))
+end
 
 function Base.copy(S::DSTOp)
   return DSTOp(eltype(S), size(S.plan))

@@ -12,8 +12,8 @@ a given input array.
 * (`wt=wavelet(WT.db2)`)  - Wavelet to apply
 """
 function WaveletOp(T::Type, shape, wt=wavelet(WT.db2))
-  return LinearOperator{T}(prod(shape), prod(shape), false, false
-            , wrapProd( x->vec( dwt(reshape(x,shape),wt) ) )
+  return LinearOperator(T, prod(shape), prod(shape), false, false
+            , (res,x)->dwt!(reshape(res,shape), reshape(x,shape), wt)
             , nothing
-            , wrapProd( y->vec( idwt(reshape(y,shape),wt) ) ) )
+            , (res,x)->idwt!(reshape(res,shape), reshape(x,shape), wt) )
 end
