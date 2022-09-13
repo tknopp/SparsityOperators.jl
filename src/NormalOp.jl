@@ -6,13 +6,17 @@ struct NormalOp{S,D,V}
   tmp::V
 end
 
+function NormalOp(parent, weights)
+  tmp = Vector{eltype(parent)}(undef, size(parent, 1))
+  return NormalOp(parent, weights, tmp)
+end
+
 function Base.copy(S::NormalOp)
   return NormalOp(copy(S.parent), S.weights, copy(S.tmp))
 end
 
-function normalOperator(S, W=opEye(eltype(S), size(S,1)))
-  tmp = Vector{eltype(S)}(undef, size(S, 1))
-  return NormalOp(S,W,tmp)
+function normalOperator(parent, weights=opEye(eltype(parent), size(parent,1)))
+  return NormalOp(parent, weights)
 end
 
 function Base.size(S::NormalOp)
