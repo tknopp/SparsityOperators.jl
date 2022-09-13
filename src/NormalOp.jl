@@ -1,16 +1,18 @@
 export NormalOp, normalOperator
 
-struct NormalOp{S,D} 
+struct NormalOp{S,D,V} 
   parent::S
   weights::D
+  tmp::V
 end
 
 function Base.copy(S::NormalOp)
-  return NormalOp(copy(S.parent), S.weights)
+  return NormalOp(copy(S.parent), S.weights, copy(S.tmp))
 end
 
-function normalOperator(S, W=opEye())
-  return NormalOp(S,W)
+function normalOperator(S, W=opEye(eltype(S), size(S,1)))
+  tmp = Vector{eltype(S)}(undef, size(S, 1))
+  return NormalOp(S,W,tmp)
 end
 
 function Base.size(S::NormalOp)
@@ -25,16 +27,15 @@ function Base.size(S::NormalOp, dim)
   end
 end
 
-function LinearAlgebra.mul!(x, S::NormalOp, b)
-  x .= S * b
-  return x
+function LinearAlgebra.mul!(y, S::NormalOp, x)
+  mul!(S.tmp, S.parent, x)
+  mul!(S.tmp, S.weights, S.tmp) # This can be dangerous. We might need to create two tmp vectors
+  return mul!(y, adjoint(S.parent), S.tmp)
 end
 
 # Generic fallback -> TODO avoid allocations
 function Base.:*(N::NormalOp, x::AbstractVector)
-
-  #@info size(x)  size(N.parent)   size(N.weights)   
-
-  d = adjoint(N.parent)*(N.weights*(N.parent*x))
-  return d
+  y = similar(x)
+  mul!(y,N,x)
+  return y
 end

@@ -14,6 +14,11 @@ using Reexport
 @reexport using FFTW
 @reexport using Wavelets
 
+LinearOperators.use_prod5!(op::opEye) = false
+LinearOperators.has_args5(op::opEye) = false
+
+
+
 const Trafo = Union{AbstractMatrix, AbstractLinearOperator, Nothing}
 const FuncOrNothing = Union{Function, Nothing}
 
