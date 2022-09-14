@@ -76,13 +76,13 @@ function FFTOp(T::Type, shape::NTuple{D,Int64}, shift::Bool=true; unitary::Bool=
   end
 end
 
-function fft_multiply!(res::Vector{T}, plan::P, x::Vector{Tr}, factor::T, tmpVec::Array{T,D}) where {T, Tr, P<:AbstractFFTs.Plan, D}
+function fft_multiply!(res::AbstractVector{T}, plan::P, x::AbstractVector{Tr}, factor::T, tmpVec::Array{T,D}) where {T, Tr, P<:AbstractFFTs.Plan, D}
   tmpVec[:] .= x
   plan * tmpVec
   res .= factor .* vec(tmpVec)
 end
 
-function fft_multiply_shift!(res::Vector{T}, plan::P, x::Vector{Tr}, shape::NTuple{D}, factor::T, tmpVec::Array{T,D}) where {T, Tr, P<:AbstractFFTs.Plan, D}
+function fft_multiply_shift!(res::AbstractVector{T}, plan::P, x::AbstractVector{Tr}, shape::NTuple{D}, factor::T, tmpVec::Array{T,D}) where {T, Tr, P<:AbstractFFTs.Plan, D}
   ifftshift!(tmpVec, reshape(x,shape))
   plan * tmpVec
   fftshift!(reshape(res,shape), tmpVec)
