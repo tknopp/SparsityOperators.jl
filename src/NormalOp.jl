@@ -7,7 +7,8 @@ struct NormalOp{S,D,V}
 end
 
 function NormalOp(parent, weights)
-  tmp = Vector{eltype(parent)}(undef, size(parent, 1))
+  T = promote_type(eltype(parent), eltype(weights))
+  tmp = Vector{T}(undef, size(parent, 1))
   return NormalOp(parent, weights, tmp)
 end
 
