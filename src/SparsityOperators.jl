@@ -6,7 +6,7 @@ import LinearAlgebra.BLAS: gemv, gemv!
 import LinearAlgebra: BlasFloat, normalize!, norm, rmul!, lmul!
 using SparseArrays
 using Random
-using CUDA
+#using CUDA
 
 using Reexport
 @reexport using Reexport
@@ -16,7 +16,6 @@ using Reexport
 
 LinearOperators.use_prod5!(op::opEye) = false
 LinearOperators.has_args5(op::opEye) = false
-
 
 
 const Trafo = Union{AbstractMatrix, AbstractLinearOperator, Nothing}

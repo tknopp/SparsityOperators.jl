@@ -38,7 +38,8 @@ returns an operator which performs an FFT on Arrays of type T
 """
 function FFTOp(T::Type, shape::NTuple{D,Int64}, shift::Bool=true; unitary::Bool=true, cuda::Bool=false) where D
   
-  tmpVec = cuda ? CuArray{T}(undef,shape) : Array{Complex{real(T)}}(undef, shape)
+  #tmpVec = cuda ? CuArray{T}(undef,shape) : Array{Complex{real(T)}}(undef, shape)
+  tmpVec = Array{Complex{real(T)}}(undef, shape)
   plan = plan_fft!(tmpVec; flags=FFTW.MEASURE)
   iplan = plan_bfft!(tmpVec; flags=FFTW.MEASURE)
 
